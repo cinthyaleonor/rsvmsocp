@@ -24,7 +24,7 @@
     H= cbind(A,e1)
     G= cbind(B,e2)
     
-    HH=t(H)%*%(H)
+    HH=t(H)%*%H
     HH = HH + theta1*diag(dim(HH)[2]) #regularization
     R1=chol(HH)
     rm(HH)
@@ -44,7 +44,7 @@
   ## Building the 2nd constraint
     At2=matrix(0,nrow=n+1,ncol=n+2)
     At2[1,]=c( 0,- mu[2,], -1)
-    At2[1:n+1,1:n+1]=kappa[2]*t(Mchol[[2]])
+    At2[2:(n+1),2:(n+1)]=kappa[2]*t(Mchol[[2]])
     c2=c(-1,numeric(n+1))
   
     At=-rbind(At1,At2)
@@ -55,8 +55,8 @@
     cone <- list( q = K.q)
     
     scs <- scs(At, ct, -bb , cone)
-    w1=cbind(scs$x[1:n+1])
-    b1=scs$x[n+2]
+    w1=cbind(scs$x[2:(n+1)])
+    b1=scs$x[(n+2)]
     
     rm(At,At1, At2)
   
@@ -67,7 +67,7 @@
     ## Building the 2nd constraint
     At2=matrix(0,nrow=n+1,ncol=n+2)
     At2[1,]=c( 0, mu[1,], 1)
-    At2[1:n+1,1:n+1]=kappa[1]*t(Mchol[[1]])
+    At2[2:(n+1),2:(n+1)]=kappa[1]*t(Mchol[[1]])
 
   
     At=-rbind(At1,At2)
@@ -79,8 +79,8 @@
     scs <- scs(At, ct, -bb , cone)
     rm(At,At1, At2, c1, c2)
   
-    w2=cbind(scs$x[1:n+1])
-    b2=scs$x[n+2]
+    w2=cbind(scs$x[2:(n+1)])
+    b2=scs$x[(n+2)]
   
   
   return(list(w1=w1,b1=b1,w2=w2,b2=b2))

@@ -1,4 +1,4 @@
-three.RC.1<-function(X,Y,kapa){
+three.RC.1<-function(X,Y,kappa){
 
   n=length(X[2,])
 
@@ -31,15 +31,11 @@ three.RC.1<-function(X,Y,kapa){
   At3=matrix(0,nrow=n+1,ncol = n+2)
   c3=matrix(0,nrow=n+1,ncol = 1)
   
-  At2[1,1]=-1
-  At2[1,1:n+1]=mu[1,]
-  At2[1,n+2]=1
-  At2[1:n+1,1:n+1]=kappa[1]*t(Mchol[[1]])
+  At2[1,1:(n+2)]=c(-1, mu[1,],1)
+  At2[2:(n+1),2:(n+1)]=kappa[1]*t(Mchol[[1]])
   
-  At3[1,2]=-1
-  At3[1,1:n+1]=-mu[2,]
-  At3[1,n+1]=-1
-  At3[1:n+1,1:n+1]=kappa[2]*t(Mchol[[2]])
+  At3[1,1:(n+2)]=c(-1,-mu[2,],-1)
+  At3[2:(n+1),2:(n+1)]=kappa[2]*t(Mchol[[2]])
 
   ## Solve the SOC-problem with SCS
   At=-rbind(Dt,At2,At3) #
@@ -49,8 +45,8 @@ three.RC.1<-function(X,Y,kapa){
 
   scs=scs(At,ct,-bb,cone)
 
-  w=cbind(scs$x[1:n+1])
-  b=scs$x[n+2]
+  w=cbind(scs$x[2:(n+1)])
+  b=scs$x[(n+2)]
   return(list(w=w,b=b))
 
 

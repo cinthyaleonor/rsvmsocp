@@ -6,11 +6,11 @@
 medi_auc_accu= function(Predict,Y){
 
 # Calculate accuracy identifying  where de predicted class is equal to real class
-accu <- (1-length(subset(Predict, Predict==Y))/length(Predict)) 
-tPos=length(Predict[Y==1&Predict==1]) #True Positive
-tNeg=length(Predict[Y==-1 & Predict==-1]) #True Negative
-fPos=length(Predict[Y==-1 & Predict==1]) #False Positive
-fNeg=length(Predict[Y==1 & Predict==-1]) #False Negative
+accu <- (length(subset(Predict, Predict==Y))/length(Predict)) 
+tPos=length(Predict[Y==1  & Predict==Y]) #True Positive
+tNeg=length(Predict[Y==-1 & Predict==Y]) #True Negative
+fPos=length(Predict[Y==-1 & Predict!=Y]) #False Positive
+fNeg=length(Predict[Y==1  & Predict!=Y]) #False Negative
 sens=tPos/(tPos+fNeg) # sensitivity 
 spec=tNeg/(fPos+tNeg) # specificity
 AUC=(sens+spec)/2

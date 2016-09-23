@@ -25,23 +25,22 @@ one.HC.1 <-function(X,Y,kappa) # Socp_H Chol - svmV1_scs
 
   ## %% Building the 1st constraint
   At1=diag(x=1,nrow = n+1, ncol=n+2)
-  c1=cbind(numeric(n+1))
+  c1=numeric(n+1)
 
   ## %% Building the 2nd and 3rd constraint
-  At2=matrix(0,nrow=2*(n+1),ncol = n+2)
-  c2=matrix(0,nrow=2*(n+1),ncol = 1)
+  At2=matrix(0,nrow=2*(n+1),ncol = (n+2))
+  c2=numeric(2*(n+1)) #%matrix(0,nrow=2*(n+1),ncol = 1)
 
   
   for(i in 1:2){
     f=(i-1)*(n+1)+1 #starting row
-    At2[f,1:n+1]= Ylab[i]*mu[i,]
-    At2[f,n+2]=Ylab[i]
-    At2[f+1:n,1:n+1]=kappa[i]*t(Mchol[[i]])
+    At2[f,2:(n+2)]=c(Ylab[i]*mu[i,], Ylab[i])
+    At2[f+1:n,2:(n+1)]=kappa[i]*t(Mchol[[i]])
     c2[f]=-1
   }
 
    At=-rbind(At1,At2) ## sparce
-   ct=rbind(c1,c2)
+   ct=cbind(c(c1,c2))
 
   ## %% Solve the SOC-problem with SCS
 
@@ -50,7 +49,7 @@ one.HC.1 <-function(X,Y,kappa) # Socp_H Chol - svmV1_scs
   cone <- list( q = K.q)
   scs <- scs(At, ct, -bb , cone)
 
-    w=cbind(scs$x[1:n+1])
+    w=cbind(scs$x[2:(n+1)])
     b=scs$x[n+2]
 
 

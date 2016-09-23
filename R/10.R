@@ -9,8 +9,7 @@
     ## Statistics Measures
     mu=rbind(colMeans(A),colMeans(B))
     
-    Mchol_1=(t(A)-mu[1,])*as.vector(array(1,m1))/sqrt(m1)
-    Mchol_2=(t(B)-mu[2,])*as.vector(array(1,m2))/sqrt(m2)
+    Mchol=list((t(A)-mu[1,])*as.vector(array(1,m1))/sqrt(m1),(t(B)-mu[2,])*as.vector(array(1,m2))/sqrt(m2))
      
     #end calcmed
     #######
@@ -19,7 +18,7 @@
     H= cbind(A,e1)
     G= cbind(B,e2)
     
-    HH=t(H)%*%(H)
+    HH=t(H)%*%H
     HH = HH + theta1*diag(dim(HH)[2]) #regularization
     R1=chol(HH)
     rm(HH)
@@ -40,7 +39,7 @@
     ## Building the 2nd constraint
     At2=matrix(0,nrow=m2+1,ncol=n+2)
     At2[1,]=c( 0,- mu[2,], -1)
-    At2[1:m2+1,1:n+1]=kappa[2]*t(Mchol_2[[2]])
+    At2[2:(m2+1),2:(n+1)]=kappa[2]*t(Mchol[[2]])
     
     c2=c(-1,numeric(m2+1))
     
@@ -52,8 +51,8 @@
     cone <- list( q = K.q)
     
     scs <- scs(At, ct, -bb , cone)
-    w1=cbind(scs$x[1:n+1])
-    b1=scs$x[n+2]
+    w1=cbind(scs$x[2:(n+1)])
+    b1=scs$x[(n+2)]
     
     rm(At,At1, At2,c2,K.q)
     
@@ -64,7 +63,7 @@
     ## Building the 2nd constraint
     At2=matrix(0,nrow=m1+1,ncol=n+2)
     At2[1,]=c( 0, mu[1,], 1)
-    At2[1:m1+1,1:n+1]=kappa[1]*t(Mchol_1[[1]])
+    At2[2:(m1+1),2:(n+1)]=kappa[1]*t(Mchol[[1]])
     c2=c(-1,numeric(m1+1))
     
     
@@ -78,8 +77,8 @@
     scs <- scs(At, ct, -bb , cone)
     rm(At,At1, At2, c1, c2)
     
-    w2=cbind(scs$x[1:n+1])
-    b2=scs$x[n+2]
+    w2=cbind(scs$x[2:(n+1)])
+    b2=scs$x[(n+2)]
     
     
     return(list(w1=w1,b1=b1,w2=w2,b2=b2))
